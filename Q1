@@ -16,3 +16,17 @@ rc.customer_name as customer_name
 from return_count rc
 inner join order_count oc on rc.customer_name = oc.customer_name
 where ((name2*100.0)/name1) > 50
+
+
+Easy Method
+
+select 
+o.customer_name
+,
+round((count(r.order_id)*100.0)/count(*),1) as return_percent
+
+from orders o
+left join returns r
+on o.order_id = r.order_id
+group by customer_name
+having count(r.order_id) > count(*)*.5
