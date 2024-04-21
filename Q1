@@ -1,0 +1,18 @@
+with order_count as (select *
+, count(customer_name) as name1
+from orders
+group by customer_name)
+,
+return_count as (
+select *,
+count(customer_name) as name2
+from returns r
+inner join orders o on r.order_id = o.order_id
+group by customer_name)
+
+select
+rc.customer_name as customer_name 
+, ((name2*100.0)/name1) as return_percent
+from return_count rc
+inner join order_count oc on rc.customer_name = oc.customer_name
+where ((name2*100.0)/name1) > 50
