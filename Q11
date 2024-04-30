@@ -1,0 +1,33 @@
+NamasteKart an ecommerce company wants to build a very imporant business metrics where they want to track on daily basis how many new and repeat customers are purchasing products from their website. A new customer is defined when he purchased anything for the first time from the website and repeat customer is someone who has done atleast one purchase in the past.
+
+Table: customer_orders (primary key : order_id)
+
+column name	datatype
+order_id	int
+order_date	date
+customer_id 	int
+order_amount 	int
+ 
+Expected Output:
+
+order_date	new_customers	repeat_customers
+2022-01-01	3	0
+2022-01-02	2	1
+2022-01-03	1	2
+
+My Solution:
+
+with rnk as (select 
+order_date,
+customer_id,
+dense_rank() over (partition by customer_id order by order_date ) as rnk 
+
+from customer_orders)
+
+select
+order_date,
+sum(case when rnk = 1 then 1 else 0 end) as new_customers,
+sum(case when rnk <> 1 then 1 else 0 end) as repeat_customers
+
+from rnk 
+group by order_date
